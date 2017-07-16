@@ -100,4 +100,45 @@ RSpec.describe LinkedList do
       expect(linked_list.tail.next_node).to be_nil
     end
   end
+
+  describe '#remove_at(index)' do
+    context 'between nodes' do
+      it 'updates the link of the nodes.' do
+        3.times { |n| linked_list.append("#{n} value") }
+        linked_list.remove_at(1)
+
+        expect(linked_list.head.next_node).to eq(linked_list.tail)
+      end
+    end
+
+    context 'head and tail' do
+      it 'removes the node from list and sets tail and head  to nil' do
+        linked_list.append('value')
+        linked_list.remove_at(0)
+
+        expect(linked_list.size).to be_zero
+        expect(linked_list.head).to be_nil
+        expect(linked_list.tail).to be_nil
+      end
+    end
+
+    context 'index is head' do
+      it 'sets the head to the next node.' do
+        3.times { |n| linked_list.append("#{n} value") }
+        linked_list.remove_at(0)
+
+        expect(linked_list.at(0).value).to eq('1 value')
+      end
+    end
+
+    context 'index is tail' do
+      it 'removes the link from node before' do
+        3.times { |n| linked_list.append("#{n} value") }
+        linked_list.remove_at(2)
+
+        expect(linked_list.at(1).next_node).to be_nil
+      end
+    end
+
+  end
 end

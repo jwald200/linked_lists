@@ -5,14 +5,17 @@ class Node
     @value = value
     @next_node = next_node
   end
+
+  def to_s
+    "( #{value} )"
+  end
 end
 
 class LinkedList
   attr_reader :head, :tail
 
   def initialize
-    @head = nil
-    @tail = nil
+    reset
   end
 
   def append(value)
@@ -30,30 +33,21 @@ class LinkedList
   end
 
   def empty?
-    tail.nil? || head.nil?
+    size.zero?
   end
 
   def size
-    return 0 unless head
-
-    size = 0
-    each { |c|size += 1 }
-    size
+    to_a.size
   end
 
   def at(index)
-    loop_index = 0
-    each do |node|
-      return node if loop_index == index
-      loop_index += 1
-    end
-
-    nil
+    to_a[index]
   end
 
   def each(&block)
-    current_node = head
+    return enum_for(:each) unless block_given?
 
+    current_node = head
     while current_node
       yield(current_node)
 
@@ -64,43 +58,62 @@ class LinkedList
   end
 
   def contains?(value)
-    each { |node| return true if node.value == value }
-    false
+    values.include? value
   end
 
   def find(value)
-    index = 0
-
-    each do |node|
-      return index if node.value == value
-      index += 1
-    end
-
-    nil
+    values.index(value)
   end
 
   def pop
-    one_before_tail = nil
+    old_tail = tail
 
-    each do |node|
-      one_before_tail = node if node.next_node == tail
+    if head == tail
+      reset
+    else
+      @tail = at(size - 2)
+      @tail.next_node = nil
     end
-
-    @tail = one_before_tail
-    old_tail = one_before_tail.next_node
-    @tail.next_node = nil
 
     old_tail
   end
 
+  def shift
+    old_head = head
+    if head == tail
+      reset
+    end
+
+    @head = at(1)
+    old_head
+  end
+
+  def remove_at(index)
+    node = at(index)
+
+    if node == tail
+      pop
+    elsif node == head
+      shift
+    else
+      at(index - 1).next_node = at(index + 1)
+    end
+  end
+
   def to_a
-    array = []
-    each { |node| array << node.value }
-    array
+    each.to_a
   end
 
   def to_s
-    to_a.map { |value| "( #{value} )" }.join(' -> ') +
-    ' -> nil'
+    to_a.map(&:to_s).join(' -> ') + ' -> nil'
+  end
+
+  def values
+    each.map(&:value)
+  end
+
+  def reset
+    @head = nil
+    @tail = nil
   end
 end
