@@ -100,6 +100,14 @@ class LinkedList
     end
   end
 
+  def insert_at(index, value)
+    return prepend(value) if index.zero?
+
+    one_before = at(index - 1)
+    return unless one_before
+    one_before.next_node = Node.new(value, one_before.next_node)
+  end
+
   def to_a
     each.to_a
   end

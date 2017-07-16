@@ -141,4 +141,35 @@ RSpec.describe LinkedList do
     end
 
   end
+
+  describe '#insert_at' do
+    context 'empty list' do
+      it 'does something' do
+        linked_list.insert_at(0, 'value')
+
+        expect(linked_list.size).to be 1
+        expect(linked_list.at(0).value).to eq('value')
+      end
+    end
+
+    context 'out of index' do
+      it 'does insert and returns nil' do
+        result = linked_list.insert_at(5, 'value')
+        expect(result).to be_nil
+        expect(linked_list.size).to be_zero
+        expect(linked_list.at(5)).to be_nil
+      end
+    end
+
+    context 'list has nodes' do
+      it 'inserts the value and updates the list' do
+        3.times { |n| linked_list.append("#{n} value") }
+
+        linked_list.insert_at(1, 'insert value')
+        expect(linked_list.at(1).value).to eq('insert value')
+        expect(linked_list.at(2).value).to eq('1 value')
+        expect(linked_list.at(1).next_node.value).to eq('1 value')
+      end
+    end
+  end
 end
